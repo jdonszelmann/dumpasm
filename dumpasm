@@ -1,0 +1,16 @@
+#!/usr/bin/bash
+
+if [ -p /dev/stdin ]; then
+    stdinput=`cat`
+else
+    stdinput=""
+fi
+
+params="${@}"
+
+echo "$stdinput; $params" | sed -e $'s/;/\\\n/g' | as -o tmp.o
+ld --entry=0x0 -Ttext 200000 --oformat binary -o tmp.bin tmp.o
+rm tmp.o
+objdump -D -b binary -mi386:x86-64 tmp.bin 
+rm tmp.bin
+
