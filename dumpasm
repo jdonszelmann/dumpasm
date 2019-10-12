@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+TEMP_FILE=$(mktemp)
+
 if [ -p /dev/stdin ]; then
     stdinput=`cat`
 else
@@ -8,9 +10,11 @@ fi
 
 params="${@}"
 
-echo "$stdinput; $params" | sed -e $'s/;/\\\n/g' | as -o tmp.o
-ld --entry=0x0 -Ttext 200000 --oformat binary -o tmp.bin tmp.o
-rm tmp.o
-objdump -D -b binary -mi386:x86-64 tmp.bin 
-rm tmp.bin
+sed -e $'s/;/\\\n/g'<<< "$stdinput; $params" | as -o $TEMP_FILE.o
+
+ld --entry=0x0 -Ttext 200000 --oformat binary -o $TEMP_FILE.bin $TEMP_FILE.o && \
+rm $TEMP_FILE.o
+
+objdump -D -b binary -mi386:x86-64 $TEMP_FILE.bin && \
+rm $TEMP_FILE.bin
 
