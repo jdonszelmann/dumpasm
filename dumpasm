@@ -8,6 +8,8 @@ if [[ $1 == "--intel" ]] ; then
     shift
 fi
 
+echo $#
+
 if [[ $# -eq 0 ]] ; then
     stdinput=$(cat)
 else
