@@ -14,10 +14,15 @@ else
     stdinput="${@}"
 fi
 
+input=$(tr ';' '\n' <<< "$stdinput");
+
 if [[ $assembler == "as" ]] ; then
-    echo $stdinput | (echo ".text" && cat) | as -o "$TEMP_FILE.o"
+    echo ".text" > "$TEMP_FILE.asm"
+    echo "$input" >> "$TEMP_FILE.asm"
+    as -o "$TEMP_FILE.o" "$TEMP_FILE.asm" && rm "$TEMP_FILE.asm"
 else
-    echo $stdinput | (echo ".text:" && cat) > "$TEMP_FILE.asm"
+    echo ".text:" > "$TEMP_FILE.asm"
+    echo "$input" >> "$TEMP_FILE.asm"
     nasm -f elf64 -o "$TEMP_FILE.o" "$TEMP_FILE.asm" && rm "$TEMP_FILE.asm"
 fi
 
