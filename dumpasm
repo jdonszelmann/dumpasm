@@ -27,5 +27,5 @@ else
 fi
 
 
-objdump -D -mi386:x86-64 -j .text "$TEMP_FILE.o" && rm "$TEMP_FILE.bin"
+objdump -D -mi386:x86-64 -j .text --visualize-jumps "$TEMP_FILE.o" && rm "$TEMP_FILE.bin"
 
